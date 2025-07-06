@@ -1,9 +1,35 @@
 main :: () {
-    content := "Hello";
+    function_interface();
+    print("\n");
+    table_interface();
+}
 
-    s := template_to_string_from_environment(TEMPLATE);
+function_interface :: () {
+    s := html_template(TEMPLATE, null, (key: string, user_data: *void) -> string {
+        if key == {
+            case "content";
+                return "Some content";
 
-    print("%\n", s);
+            case "give_me_a_thing";
+                return give_me_a_thing();
+
+            case;
+                return "";
+        }
+    });
+
+    print("Function Interface:\n");
+    print("%", s);
+}
+
+table_interface :: () {
+    t: Table(string, string);
+    table_set(*t, "content", "Content");
+
+    s := html_template(TEMPLATE, t);
+
+    print("Table Interface:\n");
+    print("%", s);
 }
 
 give_me_a_thing :: () -> string {
@@ -21,11 +47,12 @@ TEMPLATE :: #string HTML
     </head>
     <body>
         {{ content }}
-        {{ give_me_a_thing() }}
+        {{ give_me_a_thing }}
     </body>
 </html>
 HTML
 
 #import "Basic";
 #import "Compiler";
+#import "Hash_Table";
 #import,file "../module.jai";
